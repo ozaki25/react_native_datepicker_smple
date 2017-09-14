@@ -1,31 +1,77 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  DatePickerIOS,
+  Modal,
   StyleSheet,
+  TextInput,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native';
 
 export default class ReactNativeDatepickerSample extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      date: null,
+      modalVisible: false,
+    };
+  }
+
+  onPressButton() {
+    this.openDatepicker();
+  }
+
+  onFocusInput() {
+    this.openDatepicker();
+  }
+
+  openDatepicker() {
+    this.setState({ modalVisible: true });
+  }
+
+  onDateChange(date) {
+    this.setState({ date: date });
+  }
+
+  onPressCloseModal() {
+    this.setState({ modalVisible: false });
+  }
+
   render() {
+    const date = this.state.date || new Date(1990, 0, 1);
+    const year = this.state.date ? String(this.state.date.getFullYear()) : '';
+    const month = this.state.date ? String(this.state.date.getMonth() + 1) : '';
+    const day = this.state.date ? String(this.state.date.getDate()) : '';
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+        <View style={styles.inputDateGroup}>
+          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={year} />
+          <Text>年</Text>
+          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={month} />
+          <Text>月</Text>
+          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={day} />
+          <Text>日</Text>
+          <TouchableOpacity style={styles.button} onPress={this.onPressButton.bind(this)}>
+            <Text>Calendar</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.modalContainer}>
+          <Modal
+             animationType="slide"
+             transparent={true}
+             visible={this.state.modalVisible}>
+            <View style={styles.modalContents}>
+              <View style={styles.datePickerContainer}>
+                <DatePickerIOS date={date} mode="date" onDateChange={this.onDateChange.bind(this)} />
+                <TouchableOpacity style={styles.closeButton} onPress={this.onPressCloseModal.bind(this)}>
+                  <Text>OK</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </View>
     );
   }
@@ -34,19 +80,38 @@ export default class ReactNativeDatepickerSample extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    padding: 10,
+  },
+  inputDateGroup: {
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    flexDirection: 'row',
+    marginTop: 25,
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  inputDate: {
+    textAlign: 'right',
+    width: 40,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  button: {
+    alignItems: 'center',
+    width: 100,
+  },
+  modalContainer: {
+  },
+  modalContents: {
+    flex: 1,
+    backgroundColor: '#424242',
+    opacity: 0.9,
+    justifyContent: 'center',
+  },
+  datePickerContainer: {
+    backgroundColor: '#f5f5f5',
+    marginHorizontal: 10,
+    paddingBottom: 10,
+  },
+  closeButton: {
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    width: 100,
   },
 });
 
