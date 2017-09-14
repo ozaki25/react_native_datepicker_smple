@@ -13,9 +13,7 @@ export default class ReactNativeDatepickerSample extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      year: '',
-      month: '',
-      day: '',
+      date: null,
     };
   }
 
@@ -29,19 +27,13 @@ export default class ReactNativeDatepickerSample extends Component {
 
   async openDatepicker() {
     try {
-      const defaultYear = this.state.year ? Number(this.state.year) : 1990;
-      const defaultMonth = this.state.month ? Number(this.state.month) - 1 : 0;
-      const defaultDay = this.state.day ? Number(this.state.day) : 1;
-
       const { action, year, month, day } = await DatePickerAndroid.open({
-        date: new Date(defaultYear, defaultMonth, defaultDay),
+        date: this.state.date || new Date(1990, 0, 1),
         mode: 'spinner',
       });
       if(action !== DatePickerAndroid.dismissedAction) {
         this.setState({
-          year: String(year),
-          month: String(month + 1),
-          day: String(day),
+          date: new Date(year, month, day)
         });
       }
     } catch ({ code, message }) {
@@ -50,14 +42,17 @@ export default class ReactNativeDatepickerSample extends Component {
   }
 
   render() {
+    const year = this.state.date ? String(this.state.date.getFullYear()) : '';
+    const month = this.state.date ? String(this.state.date.getMonth() + 1) : '';
+    const date = this.state.date ? String(this.state.date.getDate()) : '';
     return (
       <View style={styles.container}>
         <View style={styles.inputDateGroup}>
-          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={this.state.year} />
+          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={year} />
           <Text>年</Text>
-          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={this.state.month} />
+          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={month} />
           <Text>月</Text>
-          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={this.state.day} />
+          <TextInput style={styles.inputDate} onFocus={this.onFocusInput.bind(this) } value={date} />
           <Text>日</Text>
           <TouchableOpacity style={styles.button} onPress={this.onPressButton.bind(this)}>
             <Text>Calendar</Text>
